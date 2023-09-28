@@ -3,34 +3,34 @@ package com.jaws.mymvvmexample.presentation.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.jaws.mymvvmexample.presentation.data.CounterDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel(){
+class MainViewModel(
+    val dataSource: CounterDataSource
+) : ViewModel(){
 
-    private val _counter: MutableLiveData<Int> = MutableLiveData(0)
-
+//    private val _price: MutableLiveData<Int> = MutableLiveData(0)
+//    private val _counter: MutableLiveData<Int> = MutableLiveData(0)
+//
     val counter: LiveData<Int>
-        get() = _counter
-
-    private val _price: MutableLiveData<Int> = MutableLiveData(0)
+        get() = dataSource.getCounterFlow().asLiveData(Dispatchers.Main)
 
     val price: LiveData<Int>
-        get() = _price
+        get() =  dataSource.priceFlow.asLiveData(Dispatchers.Main)
 
     fun incrementCount(){
-        val currentCount = _counter.value
-        val newCount = (currentCount ?: 0) + 1
-        _counter.postValue(newCount)
-
-        val totalPrice = newCount * 18000
-        _price.postValue(totalPrice)
+        viewModelScope.launch {
+            dataSource.increment()
+        }
     }
 
     fun decrementCount(){
-        val currentCount = _counter.value
-        val newCount = (currentCount ?: 0) - 1
-        _counter.postValue(newCount)
-
-        val totalPrice = newCount * 18000
-        _price.postValue(totalPrice)
+        viewModelScope.launch {
+            dataSource.decrement()
+        }
     }
 }
