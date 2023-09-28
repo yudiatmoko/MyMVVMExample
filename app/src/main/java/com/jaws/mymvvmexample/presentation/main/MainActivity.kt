@@ -7,6 +7,9 @@ import androidx.activity.viewModels
 import androidx.lifecycle.viewModelScope
 import com.jaws.mymvvmexample.R
 import com.jaws.mymvvmexample.databinding.ActivityMainBinding
+import com.jaws.mymvvmexample.presentation.data.CounterDataSource
+import com.jaws.mymvvmexample.presentation.data.CounterDataSourceImpl
+import com.jaws.mymvvmexample.presentation.utils.GenericViewModelFactory
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -15,7 +18,12 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val viewModel: MainViewModel by viewModels()
+//    private val viewModel: MainViewModel by viewModels()
+
+    private val viewModel: MainViewModel by viewModels {
+        val dataSource: CounterDataSource = CounterDataSourceImpl()
+        GenericViewModelFactory.create(MainViewModel(dataSource))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +55,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun increment(){
-        viewModel.viewModelScope.launch {
-            viewModel.incrementCount()
-        }
+        viewModel.incrementCount()
     }
 
     private fun decrement(){
-        viewModel.viewModelScope.launch {
-            viewModel.decrementCount()
-        }
+        viewModel.decrementCount()
     }
 }
