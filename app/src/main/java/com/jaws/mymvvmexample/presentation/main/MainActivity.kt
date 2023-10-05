@@ -53,15 +53,8 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         viewModel.apply {
-            getDataStoreCounter().observe(this@MainActivity){
-                binding.tvCounter.text = it.toString()
-            }
-
             counter.observe(this@MainActivity){
                 binding.tvCounter.text = it.toString()
-            }
-            getDataStorePrice().observe(this@MainActivity){
-                binding.tvTotal.text = it.toString()
             }
 
            price.observe(this@MainActivity){
